@@ -32,6 +32,8 @@ spec:
         - mountPath: /etc/nginx/ssl
           name: secret-volume
         - mountPath: /usr/share/nginx/conf.d 
+          # Pad moet eigenlijk /etc/nginx.conf.d zijn, helaas wordt de huidige default.conf verwijderd.
+          # Moet ik nog uitzoeken
           name: configmap-volume
       - name: git-sync
         image: paulbakker/git-sync
