@@ -1,0 +1,53 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template: # create pods using pod definition in this template
+    metadata:
+      # unlike pod-nginx.yaml, the name is not included in the meta data as a unique name is
+      # generated from the deployment name
+      labels:
+        app: nginx
+    spec:
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: nginxsecret
+      - name: configmap-volume
+        configMap:
+          name: nginxconfigmap
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        ports:
+        - containerPort: 443
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: www-data
+          readOnly: true
+        - mountPath: /etc/nginx/ssl
+          name: secret-volume
+        - mountPath: /usr/share/nginx/conf.d 
+          name: configmap-volume
+      - name: git-sync
+        image: paulbakker/git-sync
+        imagePullPolicy: Always
+        env:
+        - name: GIT_SYNC_REPO
+          value: https://github.com/pieterlange/secretlifeofpods.git
+        - name: GIT_SYNC_WAIT
+          value: "1"
+        volumeMounts:
+        - mountPath: /git
+          name: www-data
+      volumes:
+      - name: www-data
+        emptyDir: {}
+      - name: secret-volume
+        emptyDir: {}
+      - name: configmap-volume
+        emptyDir: {}
