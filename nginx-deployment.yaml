@@ -42,7 +42,7 @@ spec:
         - name: GIT_SYNC_REPO
           value: https://github.com/pieterlange/secretlifeofpods.git
         - name: GIT_SYNC_WAIT
-          value: "1"
+          value: "15"
         volumeMounts:
         - mountPath: /git
           name: www-data
